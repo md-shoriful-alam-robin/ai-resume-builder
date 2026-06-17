@@ -4,6 +4,13 @@ import "./ResumePreview.css";
 export default function ResumePreview({ data, isBuilt }) {
   const resumeRef = useRef(null);
 
+  // App.js থেকে আসা snapshot data-র sections চেক করা হচ্ছে
+  const sections = data.sections || [
+    { id: 1, type: "experience", title: "Work Experience" },
+    { id: 2, type: "education", title: "Education" },
+    { id: 3, type: "skills", title: "Skills" },
+  ];
+
   const downloadHTML = () => {
     if (!resumeRef.current) return;
     const content = resumeRef.current.innerHTML;
@@ -31,11 +38,6 @@ export default function ResumePreview({ data, isBuilt }) {
     .r-exp-bullets { font-size: 12px; color: #444; margin-top: 6px; padding-left: 16px; line-height: 1.7; }
     .r-skills { display: flex; flex-wrap: wrap; gap: 6px; }
     .r-skill { font-size: 11px; padding: 3px 9px; border: 1px solid #ccc; border-radius: 3px; color: #333; }
-    @media print {
-      * { margin: 0; padding: 0; }
-      body { background: white; }
-      .paper { max-width: 100%; border: none; padding: 0.5in; }
-    }
   </style>
 </head>
 <body>
@@ -52,10 +54,6 @@ export default function ResumePreview({ data, isBuilt }) {
   const handlePrint = () => {
     window.print();
   };
-
-  const expLines = (data.expPolished || data.expDesc || "")
-    .split("\n")
-    .filter((l) => l.trim());
 
   return (
     <section className="preview-panel">
@@ -143,61 +141,133 @@ export default function ResumePreview({ data, isBuilt }) {
               </>
             )}
 
-            {/* Experience */}
-            {(data.expTitle || data.expCompany) && (
-              <>
-                <hr />
-                <div className="r-section-title">Work experience</div>
-                <div className="r-exp">
-                  <div className="r-exp-header">
-                    <div className="r-exp-title">{data.expTitle}</div>
-                    <div className="r-exp-date">
-                      {data.expFrom}
-                      {data.expTo ? ` – ${data.expTo}` : ""}
-                    </div>
-                  </div>
-                  <div className="r-exp-company">{data.expCompany}</div>
-                  <ul className="r-exp-bullets">
-                    {expLines.map((line, i) => (
-                      <li key={i}>{line.replace(/^•\s*/, "")}</li>
-                    ))}
-                  </ul>
-                </div>
-              </>
-            )}
-
-            {/* Education */}
-            {(data.degree || data.university) && (
-              <>
-                <hr />
-                <div className="r-section-title">Education</div>
-                <div className="r-exp">
-                  <div className="r-exp-header">
-                    <div className="r-exp-title">{data.university}</div>
-                    <div className="r-exp-date">{data.gradYear}</div>
-                  </div>
-                  <div className="r-exp-company">{data.degree}</div>
-                  {data.cgpa && (
-                    <div className="r-exp-meta">CGPA: {data.cgpa}</div>
+            {/* Dynamic Sections (এখানে .map শুরু করা হলো) */}
+            {sections.map((sec) => (
+              <React.Fragment key={sec.id}>
+                {/* 1. Experience Type */}
+                {sec.type === "experience" &&
+                  (sec.data?.expTitle || sec.data?.expCompany) && (
+                    <>
+                      <hr />
+                      <div className="r-section-title">{sec.title}</div>
+                      <div className="r-exp">
+                        <div className="r-exp-header">
+                          <div className="r-exp-title">{sec.data.expTitle}</div>
+                          <div className="r-exp-date">
+                            {sec.data.expFrom}
+                            {sec.data.expTo ? ` – ${sec.data.expTo}` : ""}
+                          </div>
+                        </div>
+                        <div className="r-exp-company">
+                          {sec.data.expCompany}
+                        </div>
+                        <ul className="r-exp-bullets">
+                          {(sec.data.expPolished || sec.data.expDesc || "")
+                            .split("\n")
+                            .filter((l) => l.trim())
+                            .map((line, i) => (
+                              <li key={i}>{line.replace(/^•\s*/, "")}</li>
+                            ))}
+                        </ul>
+                      </div>
+                    </>
                   )}
-                </div>
-              </>
-            )}
 
-            {/* Skills */}
-            {data.skills?.length > 0 && (
-              <>
-                <hr />
-                <div className="r-section-title">Skills</div>
-                <div className="r-skills">
-                  {data.skills.map((s, i) => (
-                    <span key={i} className="r-skill">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
+                {/* 2. Education Type */}
+                {sec.type === "education" &&
+                  (sec.data?.degree || sec.data?.university) && (
+                    <>
+                      <hr />
+                      <div className="r-section-title">{sec.title}</div>
+                      <div className="r-exp">
+                        <div className="r-exp-header">
+                          <div className="r-exp-title">
+                            {sec.data.university}
+                          </div>
+                          <div className="r-exp-date">{sec.data.gradYear}</div>
+                        </div>
+                        <div className="r-exp-company">{sec.data.degree}</div>
+                        {sec.data.cgpa && (
+                          <div className="r-exp-meta">
+                            CGPA: {sec.data.cgpa}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                {/* 3. Skills Type */}
+                {sec.type === "skills" && data.skills?.length > 0 && (
+                  <>
+                    <hr />
+                    <div className="r-section-title">{sec.title}</div>
+                    <div className="r-skills">
+                      {data.skills.map((s, i) => (
+                        <span key={i} className="r-skill">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* 4. Projects Type */}
+                {sec.type === "projects" && (
+                  <>
+                    <hr />
+                    <div className="r-section-title">{sec.title}</div>
+                    <div
+                      className="r-summary"
+                      style={{ color: "#999", fontStyle: "italic" }}
+                    >
+                      Add your projects here...
+                    </div>
+                  </>
+                )}
+
+                {/* 5. Languages Type */}
+                {sec.type === "languages" && (
+                  <>
+                    <hr />
+                    <div className="r-section-title">{sec.title}</div>
+                    <div
+                      className="r-summary"
+                      style={{ color: "#999", fontStyle: "italic" }}
+                    >
+                      Add your languages here...
+                    </div>
+                  </>
+                )}
+
+                {/* 6. Certifications Type */}
+                {sec.type === "certifications" && (
+                  <>
+                    <hr />
+                    <div className="r-section-title">{sec.title}</div>
+                    <div
+                      className="r-summary"
+                      style={{ color: "#999", fontStyle: "italic" }}
+                    >
+                      Add your certifications here...
+                    </div>
+                  </>
+                )}
+
+                {/* 7. Custom Type */}
+                {sec.type === "custom" && (
+                  <>
+                    <hr />
+                    <div className="r-section-title">{sec.title}</div>
+                    <div
+                      className="r-summary"
+                      style={{ color: "#999", fontStyle: "italic" }}
+                    >
+                      Add your content here...
+                    </div>
+                  </>
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </div>
       )}
