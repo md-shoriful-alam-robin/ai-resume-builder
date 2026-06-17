@@ -243,7 +243,7 @@ Output only the bullet points, nothing else.`,
                   {expandedSection === sec.id ? "▼" : "▶"} {sec.title}
                 </span>
 
-                {/* উপরে-নিচে করার বাটনগুলোর কন্ট্রোল এরিয়া */}
+                {/* উপরে-নিচে করার বাতন এবং ডিলিট কন্ট্রোল */}
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "6px" }}
                   onClick={(e) => e.stopPropagation()}
@@ -500,6 +500,7 @@ Output only the bullet points, nothing else.`,
                     </>
                   )}
 
+                  {/* PROJECTS, LANGUAGES, CERTIFICATIONS, CUSTOM FIELDS */}
                   {[
                     "projects",
                     "languages",
@@ -509,9 +510,9 @@ Output only the bullet points, nothing else.`,
                     <div className="field">
                       <label>Content</label>
                       <textarea
-                        value={formData[`custom_${sec.id}`] || ""}
+                        value={sec.data?.customContent || ""}
                         onChange={(e) =>
-                          updateField(`custom_${sec.id}`, e.target.value)
+                          updateSectionData(sec.id, "customContent", e.target.value)
                         }
                         placeholder={`Write your ${sec.title} here...`}
                         rows={3}
