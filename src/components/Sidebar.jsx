@@ -9,22 +9,24 @@ export default function Sidebar({
   updateField,
   buildResume,
   clearAll,
+  sections,
+  setSections,
+  updateSectionData,
+  moveSection,
 }) {
   const [skillInput, setSkillInput] = useState("");
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [expLoading, setExpLoading] = useState(false);
+  const [expandedSection, setExpandedSection] = useState(null);
 
   const addSkill = () => {
     const val = skillInput.trim();
-    if (val && !skills.includes(val)) {
-      setSkills((prev) => [...prev, val]);
-    }
+    if (val && !skills.includes(val)) setSkills((prev) => [...prev, val]);
     setSkillInput("");
   };
 
-  const removeSkill = (index) => {
+  const removeSkill = (index) =>
     setSkills((prev) => prev.filter((_, i) => i !== index));
-  };
 
   const generateSummary = async () => {
     if (!formData.summaryContext) return;
@@ -45,18 +47,23 @@ Rules: Write in third person, active voice, no buzzwords. Output only the summar
     setSummaryLoading(false);
   };
 
-  const generateExpDesc = async () => {
-    if (!formData.expDesc) return;
+  const generateExpDesc = async (
+    secId,
+    currentTitle,
+    currentCompany,
+    currentDesc,
+  ) => {
+    if (!currentDesc) return;
     setExpLoading(true);
     try {
       const text = await callGemini(
         `Rewrite this work experience for a CV as 3 bullet points starting with strong action verbs.
-Role: ${formData.expTitle} at ${formData.expCompany}
-Description: ${formData.expDesc}
+Role: ${currentTitle} at ${currentCompany}
+Description: ${currentDesc}
 Format: • Point 1\n• Point 2\n• Point 3
 Output only the bullet points, nothing else.`,
       );
-      updateField("expPolished", text);
+      updateSectionData(secId, "expPolished", text);
     } catch (e) {
       alert(
         "Error polishing experience. Make sure you have REACT_APP_GEMINI_API_KEY in .env file",
@@ -180,8 +187,7 @@ Output only the bullet points, nothing else.`,
               </>
             ) : (
               <>
-                <i className="ti ti-sparkles" aria-hidden="true"></i> Generate
-                with AI
+                <i className="ti ti-sparkles"></i> Generate with AI
               </>
             )}
           </button>
@@ -193,180 +199,387 @@ Output only the bullet points, nothing else.`,
                 className="edit-btn"
                 onClick={() => updateField("summary", "")}
               >
-                <i className="ti ti-x" aria-hidden="true"></i> Clear
+                <i className="ti ti-x"></i> Clear
               </button>
             </div>
           )}
         </div>
 
-        {/* Section 3: Experience */}
+        {/* Manage Sections — Accordion */}
         <div className="section-card">
           <div className="step-header">
-            <div className="step-badge">3</div>
-            <span className="step-title">Work experience</span>
+            <div className="step-badge">+</div>
+            <span className="step-title">Manage Sections</span>
           </div>
-          <div className="row">
-            <div className="field">
-              <label>Job title</label>
-              <input
-                type="text"
-                value={formData.expTitle}
-                onChange={(e) => updateField("expTitle", e.target.value)}
-                placeholder="Business Analyst"
-              />
-            </div>
-            <div className="field">
-              <label>Company</label>
-              <input
-                type="text"
-                value={formData.expCompany}
-                onChange={(e) => updateField("expCompany", e.target.value)}
-                placeholder="Company name"
-              />
-            </div>
-          </div>
-          <div className="row">
-            <div className="field">
-              <label>From</label>
-              <input
-                type="text"
-                value={formData.expFrom}
-                onChange={(e) => updateField("expFrom", e.target.value)}
-                placeholder="Jan 2024"
-              />
-            </div>
-            <div className="field">
-              <label>To</label>
-              <input
-                type="text"
-                value={formData.expTo}
-                onChange={(e) => updateField("expTo", e.target.value)}
-                placeholder="Present"
-              />
-            </div>
-          </div>
-          <div className="field">
-            <label>What did you do?</label>
-            <textarea
-              value={formData.expDesc}
-              onChange={(e) => updateField("expDesc", e.target.value)}
-              placeholder="Describe your responsibilities..."
-              rows={3}
-            />
-          </div>
-          <button
-            className="ai-btn"
-            onClick={generateExpDesc}
-            disabled={expLoading}
-          >
-            {expLoading ? (
-              <>
-                <span className="spinner"></span> Polishing...
-              </>
-            ) : (
-              <>
-                <i className="ti ti-sparkles" aria-hidden="true"></i> Polish
-                with AI
-              </>
-            )}
-          </button>
-          {formData.expPolished && (
-            <div className="ai-output">
-              <span className="ai-label">AI generated</span>
-              <p style={{ whiteSpace: "pre-line" }}>{formData.expPolished}</p>
-              <button
-                className="edit-btn"
-                onClick={() => updateField("expPolished", "")}
+
+          {sections.map((sec, i) => (
+            <div
+              key={sec.id}
+              style={{
+                borderBottom: "1px solid #f3f4f6",
+                paddingBottom: "8px",
+                marginBottom: "8px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "6px 0",
+                  cursor: "pointer",
+                }}
+                onClick={() =>
+                  setExpandedSection(expandedSection === sec.id ? null : sec.id)
+                }
               >
-                <i className="ti ti-x" aria-hidden="true"></i> Clear
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Section 4: Education */}
-        <div className="section-card">
-          <div className="step-header">
-            <div className="step-badge">4</div>
-            <span className="step-title">Education</span>
-          </div>
-          <div className="field">
-            <label>Degree</label>
-            <input
-              type="text"
-              value={formData.degree}
-              onChange={(e) => updateField("degree", e.target.value)}
-              placeholder="Bachelor of Business Administration"
-            />
-          </div>
-          <div className="field">
-            <label>University</label>
-            <input
-              type="text"
-              value={formData.university}
-              onChange={(e) => updateField("university", e.target.value)}
-              placeholder="National University"
-            />
-          </div>
-          <div className="row">
-            <div className="field">
-              <label>Graduation year</label>
-              <input
-                type="text"
-                value={formData.gradYear}
-                onChange={(e) => updateField("gradYear", e.target.value)}
-                placeholder="Feb 2020"
-              />
-            </div>
-            <div className="field">
-              <label>CGPA</label>
-              <input
-                type="text"
-                value={formData.cgpa}
-                onChange={(e) => updateField("cgpa", e.target.value)}
-                placeholder="3.97/4.0"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Section 5: Skills */}
-        <div className="section-card">
-          <div className="step-header">
-            <div className="step-badge">5</div>
-            <span className="step-title">Skills</span>
-          </div>
-          <div className="skill-input-row">
-            <input
-              type="text"
-              value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && addSkill()}
-              placeholder="Add a skill..."
-            />
-            <button className="add-btn" onClick={addSkill}>
-              Add
-            </button>
-          </div>
-          <div className="skill-tags">
-            {skills.map((skill, i) => (
-              <span key={i} className="skill-tag">
-                {skill}
-                <button
-                  onClick={() => removeSkill(i)}
-                  aria-label={`Remove ${skill}`}
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: "500",
+                    color: "#374151",
+                  }}
                 >
-                  ×
-                </button>
-              </span>
-            ))}
+                  {expandedSection === sec.id ? "▼" : "▶"} {sec.title}
+                </span>
+
+                {/* উপরে-নিচে করার বাটনগুলোর কন্ট্রোল এরিয়া */}
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => moveSection(i, "up")}
+                    disabled={i === 0}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: i === 0 ? "not-allowed" : "pointer",
+                      color: i === 0 ? "#ccc" : "#4b5563",
+                      fontSize: "14px",
+                    }}
+                  >
+                    ▲
+                  </button>
+                  <button
+                    onClick={() => moveSection(i, "down")}
+                    disabled={i === sections.length - 1}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor:
+                        i === sections.length - 1 ? "not-allowed" : "pointer",
+                      color: i === sections.length - 1 ? "#ccc" : "#4b5563",
+                      fontSize: "14px",
+                    }}
+                  >
+                    ▼
+                  </button>
+                  <button
+                    onClick={() =>
+                      setSections((prev) => prev.filter((s) => s.id !== sec.id))
+                    }
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#ef4444",
+                      fontSize: "18px",
+                      marginLeft: "4px",
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              {expandedSection === sec.id && (
+                <div
+                  style={{
+                    paddingTop: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  {/* WORK EXPERIENCE FIELDS */}
+                  {sec.type === "experience" && (
+                    <>
+                      <div className="field">
+                        <label>Job title</label>
+                        <input
+                          type="text"
+                          value={sec.data?.expTitle || ""}
+                          onChange={(e) =>
+                            updateSectionData(
+                              sec.id,
+                              "expTitle",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="Business Analyst"
+                        />
+                      </div>
+                      <div className="field">
+                        <label>Company</label>
+                        <input
+                          type="text"
+                          value={sec.data?.expCompany || ""}
+                          onChange={(e) =>
+                            updateSectionData(
+                              sec.id,
+                              "expCompany",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="Company name"
+                        />
+                      </div>
+                      <div className="row">
+                        <div className="field">
+                          <label>From</label>
+                          <input
+                            type="text"
+                            value={sec.data?.expFrom || ""}
+                            onChange={(e) =>
+                              updateSectionData(
+                                sec.id,
+                                "expFrom",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="Jan 2024"
+                          />
+                        </div>
+                        <div className="field">
+                          <label>To</label>
+                          <input
+                            type="text"
+                            value={sec.data?.expTo || ""}
+                            onChange={(e) =>
+                              updateSectionData(sec.id, "expTo", e.target.value)
+                            }
+                            placeholder="Present"
+                          />
+                        </div>
+                      </div>
+                      <div className="field">
+                        <label>Description</label>
+                        <textarea
+                          value={sec.data?.expDesc || ""}
+                          onChange={(e) =>
+                            updateSectionData(sec.id, "expDesc", e.target.value)
+                          }
+                          rows={3}
+                        />
+                      </div>
+                      <button
+                        className="ai-btn"
+                        onClick={() =>
+                          generateExpDesc(
+                            sec.id,
+                            sec.data?.expTitle,
+                            sec.data?.expCompany,
+                            sec.data?.expDesc,
+                          )
+                        }
+                        disabled={expLoading}
+                      >
+                        {expLoading ? (
+                          <>
+                            <span className="spinner"></span> Polishing...
+                          </>
+                        ) : (
+                          <>
+                            <i className="ti ti-sparkles"></i> Polish with AI
+                          </>
+                        )}
+                      </button>
+                      {sec.data?.expPolished && (
+                        <div className="ai-output">
+                          <span className="ai-label">AI generated</span>
+                          <p style={{ whiteSpace: "pre-line" }}>
+                            {sec.data.expPolished}
+                          </p>
+                          <button
+                            className="edit-btn"
+                            onClick={() =>
+                              updateSectionData(sec.id, "expPolished", "")
+                            }
+                          >
+                            <i className="ti ti-x"></i> Clear
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* EDUCATION FIELDS */}
+                  {sec.type === "education" && (
+                    <>
+                      <div className="field">
+                        <label>Degree</label>
+                        <input
+                          type="text"
+                          value={sec.data?.degree || ""}
+                          onChange={(e) =>
+                            updateSectionData(sec.id, "degree", e.target.value)
+                          }
+                          placeholder="Bachelor of..."
+                        />
+                      </div>
+                      <div className="field">
+                        <label>University</label>
+                        <input
+                          type="text"
+                          value={sec.data?.university || ""}
+                          onChange={(e) =>
+                            updateSectionData(
+                              sec.id,
+                              "university",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="University name"
+                        />
+                      </div>
+                      <div className="row">
+                        <div className="field">
+                          <label>Graduation year</label>
+                          <input
+                            type="text"
+                            value={sec.data?.gradYear || ""}
+                            onChange={(e) =>
+                              updateSectionData(
+                                sec.id,
+                                "gradYear",
+                                e.target.value,
+                              )
+                            }
+                            placeholder="Feb 2020"
+                          />
+                        </div>
+                        <div className="field">
+                          <label>CGPA</label>
+                          <input
+                            type="text"
+                            value={sec.data?.cgpa || ""}
+                            onChange={(e) =>
+                              updateSectionData(sec.id, "cgpa", e.target.value)
+                            }
+                            placeholder="3.97/4.0"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* SKILLS FIELDS */}
+                  {sec.type === "skills" && (
+                    <>
+                      <div className="skill-input-row">
+                        <input
+                          type="text"
+                          value={skillInput}
+                          onChange={(e) => setSkillInput(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && addSkill()}
+                          placeholder="Add a skill..."
+                        />
+                        <button className="add-btn" onClick={addSkill}>
+                          Add
+                        </button>
+                      </div>
+                      <div className="skill-tags">
+                        {skills.map((skill, i) => (
+                          <span key={i} className="skill-tag">
+                            {skill}
+                            <button onClick={() => removeSkill(i)}>×</button>
+                          </span>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {[
+                    "projects",
+                    "languages",
+                    "certifications",
+                    "custom",
+                  ].includes(sec.type) && (
+                    <div className="field">
+                      <label>Content</label>
+                      <textarea
+                        value={formData[`custom_${sec.id}`] || ""}
+                        onChange={(e) =>
+                          updateField(`custom_${sec.id}`, e.target.value)
+                        }
+                        placeholder={`Write your ${sec.title} here...`}
+                        rows={3}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Add new section */}
+          <div style={{ marginTop: "10px" }}>
+            <select
+              id="newSectionType"
+              style={{
+                width: "100%",
+                padding: "7px 10px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "7px",
+                fontSize: "13px",
+                marginBottom: "6px",
+              }}
+            >
+              <option value="experience">Work Experience</option>
+              <option value="education">Education</option>
+              <option value="skills">Skills</option>
+              <option value="projects">Projects</option>
+              <option value="languages">Languages</option>
+              <option value="certifications">Certifications</option>
+              <option value="custom">Custom Section</option>
+            </select>
+            <input
+              type="text"
+              id="newSectionTitle"
+              placeholder="Section title..."
+              style={{
+                width: "100%",
+                padding: "7px 10px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "7px",
+                fontSize: "13px",
+                marginBottom: "6px",
+              }}
+            />
+            <button
+              className="ai-btn"
+              onClick={() => {
+                const type = document.getElementById("newSectionType").value;
+                const title = document
+                  .getElementById("newSectionTitle")
+                  .value.trim();
+                if (!title) return alert("Title দাও!");
+                setSections((prev) => [
+                  ...prev,
+                  { id: Date.now(), type, title, data: {} },
+                ]);
+                document.getElementById("newSectionTitle").value = "";
+              }}
+            >
+              <i className="ti ti-plus"></i> Add Section
+            </button>
           </div>
         </div>
 
         {/* Build Button */}
         <button className="build-btn" onClick={buildResume}>
-          <i className="ti ti-file-cv" aria-hidden="true"></i>
-          Build resume
+          <i className="ti ti-file-cv"></i> Build resume
         </button>
 
         {/* Clear Button */}
@@ -377,7 +590,7 @@ Output only the bullet points, nothing else.`,
           }}
           style={{ background: "#ef4444", marginTop: "8px" }}
         >
-          <i className="ti ti-trash" aria-hidden="true"></i> Clear All
+          <i className="ti ti-trash"></i> Clear All
         </button>
       </div>
     </aside>
