@@ -3,7 +3,7 @@ import "./App.css";
 import Sidebar from "./components/Sidebar";
 import ResumePreview from "./components/ResumePreview";
 
-// ১. শুধুমাত্র পার্সোনাল ইনফো এবং সামারি কনটেক্সট রাখা হয়েছে এখানে
+
 const defaultFormData = {
   name: "MD SORIFUL ALAM ROBIN",
   jobTitle: "Full Stack Developer & Data Analyst",
