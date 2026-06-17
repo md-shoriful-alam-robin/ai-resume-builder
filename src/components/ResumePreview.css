@@ -225,29 +225,35 @@
     background: white;
   }
 
-  .preview-panel {
-    background: white;
+  /* Sidebar এবং header hide */
+  .sidebar,
+  .app-header,
+  .preview-header {
+    display: none !important;
   }
 
-  .preview-header {
-    display: none;
+  /*  resume show */
+  .app-main {
+    display: block !important;
+  }
+
+  .preview-panel {
+    background: white;
+    overflow: visible !important;
   }
 
   .paper-wrapper {
-    padding: 0;
+    padding: 0 !important;
+    overflow: visible !important;
   }
 
   .paper {
-    max-width: 100%;
-    border: none;
-    border-radius: 0;
-    padding: 0.5in;
-    box-shadow: none;
-    page-break-after: avoid;
-  }
-
-  .paper img {
-    max-width: 100%;
+    max-width: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0.5in !important;
+    box-shadow: none !important;
+    margin: 0 !important;
     page-break-inside: avoid;
   }
 
