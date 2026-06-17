@@ -28,6 +28,40 @@ const defaultFormData = {
   cgpa: "2.97/4.0",
 };
 
+const defaultSections = [
+  {
+    id: 1,
+    type: "experience",
+    title: "Work Experience",
+    data: {
+      expTitle: "Business Analyst",
+      expCompany: "Freelance (Fiverr)",
+      expFrom: "Jan 2024",
+      expTo: "Present",
+      expDesc:
+        "Delivered Power BI dashboards and full-stack web projects to clients, built React and Node.js applications, analyzed datasets using SQL and Python",
+      expPolished: "",
+    },
+  },
+  {
+    id: 2,
+    type: "education",
+    title: "Education",
+    data: {
+      degree: "Masters of Business Administration – Accounting",
+      university: "National University",
+      gradYear: "Feb 2020",
+      cgpa: "2.97/4.0",
+    },
+  },
+  {
+    id: 3,
+    type: "skills",
+    title: "Skills",
+    data: {},
+  },
+];
+
 const defaultSkills = [
   "React",
   "Next.js",
@@ -42,6 +76,7 @@ const defaultSkills = [
 ];
 
 export default function App() {
+  const [sections, setSections] = useState(defaultSections);
   const [formData, setFormData] = useState(defaultFormData);
   const [skills, setSkills] = useState(defaultSkills);
   const [resumeBuilt, setResumeBuilt] = useState(true);
@@ -50,20 +85,50 @@ export default function App() {
     skills: defaultSkills,
   });
 
+  const updateSectionData = (sectionId, field, value) => {
+    setSections((prev) =>
+      prev.map((sec) =>
+        sec.id === sectionId
+          ? { ...sec, data: { ...sec.data, [field]: value } }
+          : sec,
+      ),
+    );
+  };
+
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const buildResume = () => {
-    setSnapshot({ ...formData, skills });
+    setSnapshot({ ...formData, skills, sections });
     setResumeBuilt(true);
   };
 
   const clearAll = () => {
+    setSections(defaultSections);
     setFormData(defaultFormData);
     setSkills(defaultSkills);
     setResumeBuilt(false);
-    setSnapshot({ ...defaultFormData, skills: defaultSkills });
+    setSnapshot({
+      ...defaultFormData,
+      sections: defaultSections,
+      skills: defaultSkills,
+    });
+  };
+
+  const moveSection = (index, direction) => {
+    if (direction === "up" && index === 0) return; // একদম উপরে থাকলে আর উপরে যাবে না
+    if (direction === "down" && index === sections.length - 1) return; // একদম নিচে থাকলে আর নিচে যাবে না
+
+    const newSections = [...sections];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+    // উপাদান দুটি অদলবদল (Swap) করা হচ্ছে
+    const temp = newSections[index];
+    newSections[index] = newSections[targetIndex];
+    newSections[targetIndex] = temp;
+
+    setSections(newSections);
   };
 
   return (
@@ -86,6 +151,10 @@ export default function App() {
           updateField={updateField}
           buildResume={buildResume}
           clearAll={clearAll}
+          sections={sections}
+          setSections={setSections}
+          updateSectionData={updateSectionData}
+          moveSection={moveSection}
         />
         <ResumePreview data={snapshot} isBuilt={resumeBuilt} />
       </main>
