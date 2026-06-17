@@ -1,0 +1,215 @@
+.preview-panel {
+  flex: 1;
+  background: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.preview-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.preview-label i {
+  font-size: 14px;
+}
+
+.download-btn {
+  padding: 7px 14px;
+  font-size: 13px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.download-btn:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #9ca3af;
+}
+
+.empty-state i {
+  font-size: 52px;
+}
+
+.empty-state p {
+  font-size: 14px;
+}
+
+.paper-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.paper {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 2.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  color: #1a1a1a;
+}
+
+.r-name {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: Georgia, serif;
+  color: #111;
+  letter-spacing: -0.3px;
+}
+
+.r-jobtitle {
+  font-size: 14px;
+  color: #555;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.r-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #444;
+}
+
+.r-contacts span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.r-contacts i {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.paper hr {
+  border: none;
+  border-top: 2px solid #111;
+  margin: 14px 0 10px;
+}
+
+.r-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.r-summary {
+  font-size: 13px;
+  line-height: 1.75;
+  color: #333;
+}
+
+.r-exp {
+  margin-bottom: 14px;
+}
+
+.r-exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.r-exp-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.r-exp-date {
+  font-size: 11px;
+  color: #666;
+}
+
+.r-exp-company {
+  font-size: 13px;
+  color: #555;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.r-exp-meta {
+  font-size: 12px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.r-exp-bullets {
+  font-size: 12.5px;
+  color: #444;
+  margin-top: 6px;
+  padding-left: 16px;
+  line-height: 1.7;
+}
+
+.r-exp-bullets li {
+  margin-bottom: 3px;
+}
+
+.r-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.r-skill {
+  font-size: 11px;
+  padding: 3px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  color: #374151;
+}
+
+@media (max-width: 768px) {
+  .paper-wrapper {
+    padding: 1rem;
+  }
+  .paper {
+    padding: 1.5rem;
+  }
+}
