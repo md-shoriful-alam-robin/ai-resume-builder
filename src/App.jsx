@@ -59,6 +59,13 @@ export default function App() {
     setResumeBuilt(true);
   };
 
+  const clearAll = () => {
+    setFormData(defaultFormData);
+    setSkills(defaultSkills);
+    setResumeBuilt(false);
+    setSnapshot({ ...defaultFormData, skills: defaultSkills });
+  };
+
   return (
     <div className="app-container">
       <header className="app-header">

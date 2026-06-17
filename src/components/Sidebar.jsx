@@ -7,6 +7,14 @@ export default function Sidebar({ formData, skills, setSkills, updateField, buil
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [expLoading, setExpLoading] = useState(false);
 
+const handleClearAll = () => {
+    if (window.confirm('Are you sure you want to clear everything?')) {
+      clearAll();
+    }
+  };
+
+  const addSkill = () => {
+
   const addSkill = () => {
     const val = skillInput.trim();
     if (val && !skills.includes(val)) {
@@ -244,6 +252,15 @@ Output only the bullet points, nothing else.`
         <button className="build-btn" onClick={buildResume}>
           <i className="ti ti-file-cv" aria-hidden="true"></i>
           Build resume
+        </button>
+
+         {/* Clear Button */}
+        <button 
+          className="build-btn" 
+          onClick={clearAll}
+          style={{ background: '#ef4444', marginTop: '8px' }}
+        >
+          <i className="ti ti-trash" aria-hidden="true"></i> Clear All
         </button>
 
       </div>
