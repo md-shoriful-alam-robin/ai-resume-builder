@@ -85,6 +85,7 @@ export default function App() {
           setSkills={setSkills}
           updateField={updateField}
           buildResume={buildResume}
+          clearAll={clearAll}
         />
         <ResumePreview data={snapshot} isBuilt={resumeBuilt} />
       </main>
