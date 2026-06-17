@@ -3,6 +3,7 @@ import "./App.css";
 import Sidebar from "./components/Sidebar";
 import ResumePreview from "./components/ResumePreview";
 
+// ১. শুধুমাত্র পার্সোনাল ইনফো এবং সামারি কনটেক্সট রাখা হয়েছে এখানে
 const defaultFormData = {
   name: "MD SORIFUL ALAM ROBIN",
   jobTitle: "Full Stack Developer & Data Analyst",
@@ -15,19 +16,9 @@ const defaultFormData = {
   summaryContext:
     "Full-time job in Bangladesh or international, freelance on Fiverr with Power BI and web dev gigs, strong data analyst skills with Power BI and SQL",
   summary: "",
-  expTitle: "Business Analyst",
-  expCompany: "Freelance (Fiverr)",
-  expFrom: "Jan 2024",
-  expTo: "Present",
-  expDesc:
-    "Delivered Power BI dashboards and full-stack web projects to clients, built React and Node.js applications, analyzed datasets using SQL and Python",
-  expPolished: "",
-  degree: "Masters of Business Administration – Accounting",
-  university: "National University",
-  gradYear: "Feb 2020",
-  cgpa: "2.97/4.0",
 };
 
+// ২. এখানে আলাদা আইডি দিয়ে Bachelor এবং Masters দুটি শিক্ষাগত যোগ্যতাই যুক্ত করা হয়েছে
 const defaultSections = [
   {
     id: 1,
@@ -46,7 +37,18 @@ const defaultSections = [
   {
     id: 2,
     type: "education",
-    title: "Education",
+    title: "Education (Bachelor)",
+    data: {
+      degree: "Bachelor of Business Administration – Accounting",
+      university: "National University",
+      gradYear: "Nov 2018",
+      cgpa: "2.90/4.0",
+    },
+  },
+  {
+    id: 3,
+    type: "education",
+    title: "Education (Masters)",
     data: {
       degree: "Masters of Business Administration – Accounting",
       university: "National University",
@@ -55,7 +57,7 @@ const defaultSections = [
     },
   },
   {
-    id: 3,
+    id: 4,
     type: "skills",
     title: "Skills",
     data: {},
@@ -80,9 +82,12 @@ export default function App() {
   const [formData, setFormData] = useState(defaultFormData);
   const [skills, setSkills] = useState(defaultSkills);
   const [resumeBuilt, setResumeBuilt] = useState(true);
+
+  // প্রথমবার লোড হওয়ার সময়ও যেন সিভিতে সেকশনগুলো দেখায়, তাই sections যুক্ত করা হয়েছে
   const [snapshot, setSnapshot] = useState({
     ...defaultFormData,
     skills: defaultSkills,
+    sections: defaultSections,
   });
 
   const updateSectionData = (sectionId, field, value) => {
@@ -117,13 +122,12 @@ export default function App() {
   };
 
   const moveSection = (index, direction) => {
-    if (direction === "up" && index === 0) return; // একদম উপরে থাকলে আর উপরে যাবে না
-    if (direction === "down" && index === sections.length - 1) return; // একদম নিচে থাকলে আর নিচে যাবে না
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === sections.length - 1) return;
 
     const newSections = [...sections];
     const targetIndex = direction === "up" ? index - 1 : index + 1;
 
-    // উপাদান দুটি অদলবদল (Swap) করা হচ্ছে
     const temp = newSections[index];
     newSections[index] = newSections[targetIndex];
     newSections[targetIndex] = temp;
