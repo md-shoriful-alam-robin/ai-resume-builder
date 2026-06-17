@@ -141,7 +141,7 @@ export default function ResumePreview({ data, isBuilt }) {
               </>
             )}
 
-            {/* Dynamic Sections (এখানে .map শুরু করা হলো) */}
+            {/* Dynamic Sections Loop */}
             {sections.map((sec) => (
               <React.Fragment key={sec.id}>
                 {/* 1. Experience Type */}
@@ -216,11 +216,12 @@ export default function ResumePreview({ data, isBuilt }) {
                   <>
                     <hr />
                     <div className="r-section-title">{sec.title}</div>
-                    <div
-                      className="r-summary"
-                      style={{ color: "#999", fontStyle: "italic" }}
-                    >
-                      Add your projects here...
+                    <div className="r-summary" style={{ whiteSpace: "pre-line" }}>
+                      {sec.data?.customContent || (
+                        <span style={{ color: "#999", fontStyle: "italic" }}>
+                          Add your projects here...
+                        </span>
+                      )}
                     </div>
                   </>
                 )}
@@ -230,11 +231,12 @@ export default function ResumePreview({ data, isBuilt }) {
                   <>
                     <hr />
                     <div className="r-section-title">{sec.title}</div>
-                    <div
-                      className="r-summary"
-                      style={{ color: "#999", fontStyle: "italic" }}
-                    >
-                      Add your languages here...
+                    <div className="r-summary" style={{ whiteSpace: "pre-line" }}>
+                      {sec.data?.customContent || (
+                        <span style={{ color: "#999", fontStyle: "italic" }}>
+                          Add your languages here...
+                        </span>
+                      )}
                     </div>
                   </>
                 )}
@@ -244,11 +246,12 @@ export default function ResumePreview({ data, isBuilt }) {
                   <>
                     <hr />
                     <div className="r-section-title">{sec.title}</div>
-                    <div
-                      className="r-summary"
-                      style={{ color: "#999", fontStyle: "italic" }}
-                    >
-                      Add your certifications here...
+                    <div className="r-summary" style={{ whiteSpace: "pre-line" }}>
+                      {sec.data?.customContent || (
+                        <span style={{ color: "#999", fontStyle: "italic" }}>
+                          Add your certifications here...
+                        </span>
+                      )}
                     </div>
                   </>
                 )}
@@ -258,11 +261,12 @@ export default function ResumePreview({ data, isBuilt }) {
                   <>
                     <hr />
                     <div className="r-section-title">{sec.title}</div>
-                    <div
-                      className="r-summary"
-                      style={{ color: "#999", fontStyle: "italic" }}
-                    >
-                      Add your content here...
+                    <div className="r-summary" style={{ whiteSpace: "pre-line" }}>
+                      {sec.data?.customContent || (
+                        <span style={{ color: "#999", fontStyle: "italic" }}>
+                          Add your content here...
+                        </span>
+                      )}
                     </div>
                   </>
                 )}
