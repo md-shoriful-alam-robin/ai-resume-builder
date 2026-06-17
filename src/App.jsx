@@ -1,44 +1,57 @@
-import React, { useState } from 'react';
-import './App.css';
-import Sidebar from './components/Sidebar';
-import ResumePreview from './components/ResumePreview';
+import React, { useState } from "react";
+import "./App.css";
+import Sidebar from "./components/Sidebar";
+import ResumePreview from "./components/ResumePreview";
 
 const defaultFormData = {
-  name: 'MD Shoriful Alam Robin',
-  jobTitle: 'Full Stack Developer & Data Analyst',
-  email: 'typicalrobin@gmail.com',
-  phone: '',
-  website: 'www.shorifulrobin.me',
-  location: 'Dhaka, Bangladesh',
-  github: 'github.com/md-shoriful-alam-robin',
-  linkedin: 'linkedin.com/in/md-shoriful-alam-robin',
-  summaryContext: 'Full-time job in Bangladesh or international, freelance on Fiverr with Power BI and web dev gigs, strong data analyst skills with Power BI and SQL',
-  summary: '',
-  expTitle: 'Business Analyst',
-  expCompany: 'Freelance (Fiverr)',
-  expFrom: 'Jan 2024',
-  expTo: 'Present',
-  expDesc: 'Delivered Power BI dashboards and full-stack web projects to clients, built React and Node.js applications, analyzed datasets using SQL and Python',
-  expPolished: '',
-  degree: 'Bachelor of Business Administration – Accounting',
-  university: 'National University',
-  gradYear: 'Feb 2020',
-  cgpa: '2.97/4.0',
+  name: "MD SORIFUL ALAM ROBIN",
+  jobTitle: "Full Stack Developer & Data Analyst",
+  email: "typicalrobin@gmail.com",
+  phone: "01710210006",
+  website: "www.shorifulrobin.me",
+  location: "Wireless Area south, Habiganj, Bangladesh",
+  github: "github.com/md-shoriful-alam-robin",
+  linkedin: "linkedin.com/in/md-shoriful-alam-robin",
+  summaryContext:
+    "Full-time job in Bangladesh or international, freelance on Fiverr with Power BI and web dev gigs, strong data analyst skills with Power BI and SQL",
+  summary: "",
+  expTitle: "Business Analyst",
+  expCompany: "Freelance (Fiverr)",
+  expFrom: "Jan 2024",
+  expTo: "Present",
+  expDesc:
+    "Delivered Power BI dashboards and full-stack web projects to clients, built React and Node.js applications, analyzed datasets using SQL and Python",
+  expPolished: "",
+  degree: "Masters of Business Administration – Accounting",
+  university: "National University",
+  gradYear: "Feb 2020",
+  cgpa: "2.97/4.0",
 };
 
 const defaultSkills = [
-  'React', 'Next.js', 'Node.js', 'JavaScript',
-  'MySQL', 'Power BI', 'Python', 'SQL', 'HTML/CSS', 'Fiverr Freelance'
+  "React",
+  "Next.js",
+  "Node.js",
+  "JavaScript",
+  "MySQL",
+  "Power BI",
+  "Python",
+  "SQL",
+  "HTML/CSS",
+  "Fiverr Freelance",
 ];
 
 export default function App() {
   const [formData, setFormData] = useState(defaultFormData);
   const [skills, setSkills] = useState(defaultSkills);
   const [resumeBuilt, setResumeBuilt] = useState(true);
-  const [snapshot, setSnapshot] = useState({ ...defaultFormData, skills: defaultSkills });
+  const [snapshot, setSnapshot] = useState({
+    ...defaultFormData,
+    skills: defaultSkills,
+  });
 
   const updateField = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const buildResume = () => {
@@ -66,10 +79,7 @@ export default function App() {
           updateField={updateField}
           buildResume={buildResume}
         />
-        <ResumePreview
-          data={snapshot}
-          isBuilt={resumeBuilt}
-        />
+        <ResumePreview data={snapshot} isBuilt={resumeBuilt} />
       </main>
     </div>
   );
