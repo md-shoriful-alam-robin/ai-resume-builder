@@ -213,3 +213,50 @@
     padding: 1.5rem;
   }
 }
+
+/* Print Styles */
+@media print {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: white;
+  }
+
+  .preview-panel {
+    background: white;
+  }
+
+  .preview-header {
+    display: none;
+  }
+
+  .paper-wrapper {
+    padding: 0;
+  }
+
+  .paper {
+    max-width: 100%;
+    border: none;
+    border-radius: 0;
+    padding: 0.5in;
+    box-shadow: none;
+    page-break-after: avoid;
+  }
+
+  .paper img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  .r-exp,
+  .r-contacts {
+    page-break-inside: avoid;
+  }
+
+  hr {
+    page-break-after: avoid;
+  }
+}
